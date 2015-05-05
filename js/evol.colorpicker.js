@@ -1,5 +1,5 @@
 /*
- evol.colorpicker 3.2.0
+ evol.colorpicker 3.2.1
  ColorPicker widget for jQuery UI
 
  https://github.com/evoluteur/colorpicker
@@ -68,7 +68,7 @@ var _idx=0,
 
 $.widget( "evol.colorpicker", {
 
-	version: '3.2.0',
+	version: '3.2.1',
 	
 	options: {
 		color: null, // example:'#31859B'
@@ -80,6 +80,9 @@ $.widget( "evol.colorpicker", {
 		defaultPalette: 'theme', // possible values: 'theme', 'web'
 		strings: 'Theme Colors,Standard Colors,Web Colors,Theme Colors,Back to Palette,History,No history yet.'
 	},
+
+	// this is only true while showing the palette until color is chosen
+	_active: false,
 
 	_create: function() {
 		var that=this;
@@ -310,6 +313,7 @@ $.widget( "evol.colorpicker", {
 
 	showPalette: function() {
 		if(this._enabled){
+			this._active=true;
 			$('.colorPicker').not('.'+this._id).colorpicker('hidePalette');
 			if(this._palette===null){
 				this._palette=this.element.next()
@@ -365,6 +369,7 @@ $.widget( "evol.colorpicker", {
 				if(that._enabled){
 					var $this=$(this);
 					that._setValue($this.hasClass('evo-transparent')?transColor:toHex3($this.attr('style').substring(17)));
+					that._active=false;
 				}
 			})
 			.on('mouseover', sel, function(evt){
@@ -374,7 +379,9 @@ $.widget( "evol.colorpicker", {
 					if(that.options.displayIndicator){
 						that._setColorInd(c,2);
 					}
-					that.element.trigger('mouseover.color', c);
+					if(that._active){
+						that.element.trigger('mouseover.color', c);
+					}
 				}
 			})
 			.find('.evo-more a').on('click', function(){
