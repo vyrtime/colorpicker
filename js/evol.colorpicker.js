@@ -142,8 +142,16 @@ $.widget( "evol.colorpicker", {
 					.attr('aria-haspopup','true');
 				this._bindColors();
 		}
-		if(color && this.options.history){
-			this._add2History(color);
+		if(this.options.history){
+			if(color){
+				this._add2History(color);
+			}
+			if (this.options.initialHistory) {
+				var c = this.options.initialHistory;
+				for (var i in c){
+					this._add2History(c[i]);
+				}
+			}
 		}
 	},
 
