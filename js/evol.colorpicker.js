@@ -98,10 +98,10 @@ $.widget( "evol.colorpicker", {
 					style='';
 				this._isPopup=true;
 				this._palette=null;
+				var v=e.val();
 				if(color!==null){
-					e.val(color);
+					if (color != v) e.val(color).change();
 				}else{
-					var v=e.val();
 					if(v!==''){
 						color=this.options.color=v;
 					}
@@ -115,7 +115,7 @@ $.widget( "evol.colorpicker", {
 					.wrap('<div style="width:'+(this.options.hideButton?this.element.width():this.element.width()+32)+'px;'+
 						(isIE?'margin-bottom:-21px;':'')+
 						(isMoz?'padding:1px 0;':'')+
-						'"></div>')
+						'" class="evo-cp-wrap"></div>')
 					.after('<div class="'+css+'" style="'+style+'"></div>')
 					.on('keyup onpaste', function(evt){
 						var c=$(this).val();
@@ -133,6 +133,7 @@ $.widget( "evol.colorpicker", {
 					e.next().on('click', function(evt){
 						evt.stopPropagation();
 						that.showPalette();
+						return false;
 					});
 				}
 				break;
@@ -319,6 +320,30 @@ $.widget( "evol.colorpicker", {
 		}
 	},
 
+	_downOrUpPositioning: function() {
+		var el = this.element;
+		var i = 0;
+		while (el !== null && i < 100) {
+			// Look up the first parent with non-visibile overflow and compute the relative position
+			if (el.css('overflow') != 'visible') {
+				var bott = this._palette.offset().top + this._palette.height();
+				var pBott = el.offset().top + el.height();
+				var top = this._palette.offset().top - this._palette.height() - this.element.outerHeight();
+				var pTop = el.offset().top;
+				var openUp = bott > pBott && top > pTop;
+				if (openUp) {
+					this._palette.css({ bottom: this.element.outerHeight()+'px' });
+				} else {
+					this._palette.css({ bottom: 'auto' });
+				}
+				break;
+			}
+			if (el[0].tagName == 'HTML') break;
+			else el = el.offsetParent();
+			i++;
+		}
+	},
+
 	showPalette: function() {
 		if(this._enabled){
 			this._active=true;
@@ -328,10 +353,12 @@ $.widget( "evol.colorpicker", {
 					.after(this._paletteHTML()).next()
 					.on('click',function(evt){
 						evt.stopPropagation();
+						return false;
 					});
 				this._bindColors();
 				var that=this;
 				if(this._isPopup){
+					this._downOrUpPositioning();
 					$(document.body).on('click.'+that._id, function(evt){
 						if(evt.target!=that.element.get(0)){
 							that.hidePalette();
@@ -413,7 +440,7 @@ $.widget( "evol.colorpicker", {
 			if(!noHide){
 				this.hidePalette();
 			}
-			this._setBoxColor(this.element.val(c).next(), c);
+			this._setBoxColor(this.element.val(c).change().next(), c);
 		}else{
 			this._setColorInd(c,1);
 		}
