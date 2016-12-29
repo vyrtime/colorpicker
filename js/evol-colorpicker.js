@@ -1,9 +1,9 @@
 /*
- evol-colorpicker 3.2.6
+ evol-colorpicker 3.3.0
  ColorPicker widget for jQuery UI
 
  https://github.com/evoluteur/colorpicker
- (c) 2016 Olivier Giulieri
+ (c) 2017 Olivier Giulieri
 
  * Depends:
  *	jquery.ui.core.js
@@ -68,10 +68,11 @@ var _idx=0,
 
 $.widget( "evol.colorpicker", {
 
-	version: '3.2.6',
+	version: '3.3.0',
 	
 	options: {
 		color: null, // example:'#31859B'
+		customTheme: null, // example: ["#ff0000", "#00ff00", "blue"],
 		showOn: 'both', // possible values: 'focus','button','both'
 		hideButton: false,
 		displayIndicator: true,
@@ -200,43 +201,52 @@ $.widget( "evol.colorpicker", {
 	_paletteHTML1: function() {
 		var opts=this.options,
 			labels=opts.strings.split(','),
-			oTD='<td style="background-color:#',
+			oTD='<td style="background-color:',
 			cTD=isIE?'"><div style="width:2px;"></div></td>':'"><span/></td>',
-			oTRTH='<tr><th colspan="10" class="ui-widget-content">';
+			oTRTH='<tr><th colspan="10" class="ui-widget-content">',
+			i;
 
-		// base theme colors
 		var h='<table class="evo-palette'+_ie+'">'+oTRTH+labels[0]+'</th></tr><tr>';
-		for(var i=0;i<10;i++){ 
-			h+=oTD+baseThemeColors[i]+cTD;
-		}
-		h+='</tr>';
-		if(!isIE){
-			h+='<tr><th colspan="10"></th></tr>';
-		}
-		h+='<tr class="top">';
-		// theme colors
-		for(i=0;i<10;i++){ 
-			h+=oTD+subThemeColors[i]+cTD;
-		}
-		for(var r=1;r<4;r++){
-			h+='</tr><tr class="in">';
-			for(i=0;i<10;i++){ 
-				h+=oTD+subThemeColors[r*10+i]+cTD;
+
+		if (opts.customTheme) {
+			for (i=0, ml=opts.customTheme.length;i<ml;i++) {
+				h+=oTD+opts.customTheme[i]+cTD;
 			}
-		}
-		h+='</tr><tr class="bottom">';
-		for(i=40;i<50;i++){ 
-			h+=oTD+subThemeColors[i]+cTD;
-		}
-		h+='</tr>'+oTRTH;
-		// transparent color
-		if(opts.transparentColor){
-			h+='<div class="evo-transparent evo-tr-box"></div>';
-		}
-		h+=labels[1]+'</th></tr><tr>';
-		// standard colors
-		for(i=0;i<10;i++){ 
-			h+=oTD+standardColors[i]+cTD;
+		} else {
+			oTD+='#';
+			// base theme colors
+			for(i=0;i<10;i++){ 
+				h+=oTD+baseThemeColors[i]+cTD;
+			}
+			h+='</tr>';
+			if(!isIE){
+				h+='<tr><th colspan="10"></th></tr>';
+			}
+			h+='<tr class="top">';
+			// theme colors
+			for(i=0;i<10;i++){ 
+				h+=oTD+subThemeColors[i]+cTD;
+			}
+			for(var r=1;r<4;r++){
+				h+='</tr><tr class="in">';
+				for(i=0;i<10;i++){ 
+					h+=oTD+subThemeColors[r*10+i]+cTD;
+				}
+			}
+			h+='</tr><tr class="bottom">';
+			for(i=40;i<50;i++){ 
+				h+=oTD+subThemeColors[i]+cTD;
+			}
+			h+='</tr>'+oTRTH;
+			// transparent color
+			if(opts.transparentColor){
+				h+='<div class="evo-transparent evo-tr-box"></div>';
+			}
+			h+=labels[1]+'</th></tr><tr>';
+			// standard colors
+			for(i=0;i<10;i++){ 
+				h+=oTD+standardColors[i]+cTD;
+			}
 		}
 		h+='</tr></table>';
 		return h; 
