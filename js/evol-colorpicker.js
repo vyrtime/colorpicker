@@ -381,6 +381,15 @@ $.widget( "evol.colorpicker", {
 							that.hidePalette();
 						}
 					});
+					$('.popup-content').on('click.'+that._id, function(evt){
+						if(evt.target!=that.element.get(0)){
+							that.hidePalette();
+						}
+					}).on('keyup.'+that._id, function(evt){
+						if(evt.keyCode===27){
+							that.hidePalette();
+						}
+					});
 				}
 			}
 		}
