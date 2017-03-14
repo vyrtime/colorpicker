@@ -402,8 +402,10 @@ $.widget( "evol.colorpicker", {
 			var that=this;
 			this._palette.off('mouseover click', 'td,.evo-transparent')
 				.fadeOut(function(){
-					that._palette.remove();
-					that._palette=that._cTxt=null;
+					if (typeof that._palette != 'undefined' && that._palette != null) {
+						that._palette.remove();
+						that._palette=that._cTxt=null;
+					}
 				})
 				.find('.evo-more a').off('click');
 		}
