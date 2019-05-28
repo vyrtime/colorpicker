@@ -1,9 +1,9 @@
 /*
- evol-colorpicker 3.3.2
+ evol-colorpicker 3.4.0
  ColorPicker widget for jQuery UI
 
  https://github.com/evoluteur/colorpicker
- (c) 2018 Olivier Giulieri
+ (c) 2019 Olivier Giulieri
 
  * Depends:
  *	jquery.ui.core.js
@@ -68,7 +68,7 @@ var _idx=0,
 
 $.widget( "evol.colorpicker", {
 
-	version: '3.3.2',
+	version: '3.4.0',
 	
 	options: {
 		color: null, // example:'#31859B'
@@ -87,25 +87,23 @@ $.widget( "evol.colorpicker", {
 
 	_create: function() {
 		var that=this;
+		var color=this.options.color;
 		this._paletteIdx=this.options.defaultPalette=='theme'?1:2;
 		this._id='evo-cp'+_idx++;
 		this._enabled=true;
 		this.options.showOn=this.options.hideButton?'focus':this.options.showOn;
 		switch(this.element.get(0).tagName){
 			case 'INPUT':
-				var color=this.options.color,
-					e=this.element,
+				var e=this.element,
 					css=((this.options.showOn==='focus')?'':'evo-pointer ')+'evo-colorind'+(isMoz?'-ff':_ie)+(this.options.hideButton?' evo-hidden-button':''),
 					style='';
 				this._isPopup=true;
 				this._palette=null;
 				var v=e.val();
 				if(color!==null){
-					if (color != v) e.val(color).change();
-				}else{
-					if(v!==''){
-						color=this.options.color=v;
-					}
+					if(color != v) e.val(color).change();
+				}else if(v!==''){
+					color=this.options.color=v;
 				}
 				if(color===transColor){
 					css+=' evo-transparent';
@@ -148,8 +146,8 @@ $.widget( "evol.colorpicker", {
 			if(color){
 				this._add2History(color);
 			}
-			if (this.options.initialHistory) {
-				var c = this.options.initialHistory;
+			var c = this.options.initialHistory;
+			if(c){
 				for (var i in c){
 					this._add2History(c[i]);
 				}
